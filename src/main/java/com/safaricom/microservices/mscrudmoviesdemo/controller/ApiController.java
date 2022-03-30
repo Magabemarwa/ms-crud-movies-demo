@@ -1,6 +1,7 @@
 package com.safaricom.microservices.mscrudmoviesdemo.controller;
 
 import com.safaricom.microservices.mscrudmoviesdemo.model.request.MovieRequest;
+import com.safaricom.microservices.mscrudmoviesdemo.model.request.UpdateMovieRequest;
 import com.safaricom.microservices.mscrudmoviesdemo.model.response.ApiResponse;
 import com.safaricom.microservices.mscrudmoviesdemo.service.ApiServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,4 +25,13 @@ public class ApiController {
         return apiService.fetchMovieList();
     }
 
+    @PostMapping("/updateMovie")
+    public Mono<ApiResponse> updateMovie(@RequestBody UpdateMovieRequest request){
+        return apiService.updateMovie(request);
+    }
+
+    @DeleteMapping("/deleteMovie/{id}")
+    public Mono<ApiResponse> deleteMovie(@PathVariable("id") long id){
+        return apiService.deleteMovie(id);
+    }
 }
