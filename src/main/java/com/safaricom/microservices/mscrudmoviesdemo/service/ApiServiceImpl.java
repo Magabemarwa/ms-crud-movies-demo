@@ -4,9 +4,11 @@ import com.safaricom.microservices.mscrudmoviesdemo.model.Movie;
 import com.safaricom.microservices.mscrudmoviesdemo.model.request.MovieRequest;
 import com.safaricom.microservices.mscrudmoviesdemo.model.request.UpdateMovieRequest;
 import com.safaricom.microservices.mscrudmoviesdemo.model.response.ApiResponse;
+import com.safaricom.microservices.mscrudmoviesdemo.model.response.HeaderErrors;
 import com.safaricom.microservices.mscrudmoviesdemo.repository.MovieRepository;
 import static com.safaricom.microservices.mscrudmoviesdemo.util.GlobalVariables.*;
 import com.safaricom.microservices.mscrudmoviesdemo.util.LogsManager;
+import com.safaricom.microservices.mscrudmoviesdemo.util.Utilities;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -59,14 +61,30 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public Mono<ApiResponse> updateMovie(UpdateMovieRequest request, HttpHeaders headers) {
-        String sourceSystem;
-        if(headers.containsKey(X_SOURCE_SYSTEM)){
-            sourceSystem = headers.get(X_SOURCE_SYSTEM).get(0);
-        } else {
-            sourceSystem = "Default_header";
+        HeaderErrors errors = Utilities.checkIfMissingCorrelationHeader(headers);
+        System.out.println(errors.getMissingHeader());
+        System.out.println(errors.getHeaderMismatch());
+        if(errors.getMissingHeader().equals(Boolean.TRUE)){
+
+            return Mono.just(ApiResponse.responseFormatter(UUID.randomUUID().toString(), 400,
+                    "Failed", "Your request failed. Please try again",
+                    errors));
+        }
+        if(errors.getHeaderMismatch().equals(Boolean.TRUE)){
+            return Mono.just(ApiResponse.responseFormatter(UUID.randomUUID().toString(), 400,
+                    "Failed", "Your request failed. Please try again",
+                    errors));
         }
         long startTime = System.currentTimeMillis();
-        String requestId = UUID.randomUUID().toString();
+        String sourceSystem;
+        String xCorrelationConversationId;
+        if(headers.containsKey(X_SOURCE_SYSTEM) && headers.containsKey(X_CORRELATION_CONVERSATION_ID)){
+            sourceSystem = headers.get(X_SOURCE_SYSTEM).get(0);
+            xCorrelationConversationId = headers.get(X_CORRELATION_CONVERSATION_ID).get(0);
+        } else {
+            xCorrelationConversationId = "null";
+            sourceSystem = "Default_header";
+        }
         Mono<Movie> movieMono = movieRepository.findById(request.getId());
 
         return movieMono.flatMap(m -> {
@@ -76,18 +94,23 @@ public class ApiServiceImpl implements ApiService {
 
             return movieRepository.save(m)
                     .flatMap(updatedMovie -> {
-                        LogsManager.info(requestId, "Updating movie record","updateMovie",
+                        LogsManager.info(xCorrelationConversationId, "Updating movie record","updateMovie",
                                 String.valueOf(System.currentTimeMillis() - startTime), "", sourceSystem,
                                 "Mysql movie db", CUSTOMER_MESSAGE_SUCCESS_UPDATE_MOVIE, 201,
                                 "Success", "", "", "", "");
-                        return Mono.just(ApiResponse.responseFormatter(requestId, 201,
+                        return Mono.just(ApiResponse.responseFormatter(xCorrelationConversationId, 201,
                                 "Success", CUSTOMER_MESSAGE_SUCCESS_UPDATE_MOVIE,
                                 updatedMovie));
                     });
-        }).switchIfEmpty(
-          Mono.just(ApiResponse.responseFormatter(UUID.randomUUID().toString(), 203,
-                "Success", "Movie with id " + request.getId() + " does not exist",
-                null))
+        }).switchIfEmpty(Mono.defer(() -> {
+            LogsManager.info(xCorrelationConversationId, "Updating movie record","updateMovie",
+                    String.valueOf(System.currentTimeMillis() - startTime), "", sourceSystem,
+                    "Mysql movie db", CUSTOMER_MESSAGE_SUCCESS_UPDATE_MOVIE, 203,
+                    "Success", "", "", "", "");
+            return Mono.just(ApiResponse.responseFormatter(xCorrelationConversationId, 203,
+                    "Success", "Movie with id " + request.getId() + " does not exist",
+                    null));
+                })
         );
     }
 

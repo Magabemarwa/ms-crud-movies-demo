@@ -11,4 +11,6 @@ public class GlobalVariables {
             + "ErrorDescription={} | RequestPayload={} | ResponsePayload={} | RequestHeaders={} ";
     public static final String CUSTOMER_MESSAGE_SUCCESS_UPDATE_MOVIE = "Movie updated successfully";
     public static final String X_SOURCE_SYSTEM = "x-source-system";
+    public static final String X_CORRELATION_CONVERSATION_ID = "x-conversation-correlation-id";
+    public static final String CORRELATION_REGEX = "[0-9]+";
 }
