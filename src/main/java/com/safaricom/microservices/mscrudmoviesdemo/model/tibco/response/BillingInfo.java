@@ -1,28 +1,36 @@
 package com.safaricom.microservices.mscrudmoviesdemo.model.tibco.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BillingInfo {
-    private String ActivationDate;
+    @JsonProperty("ActivationDate")
+    private String activationDate;
+    @JsonProperty("ExpirationDate")
+    private String expirationDate;
+    @JsonProperty("ChargedAmount")
+    private String chargedAmount;
 
-    private String ExpirationDate;
+    public String getActivationDate() {
+        return activationDate;
+    }
 
-    private String ChargedAmount;
+    public void setActivationDate(String activationDate) {
+        this.activationDate = activationDate;
+    }
 
-    public void setActivationDate(String ActivationDate){
-        this.ActivationDate = ActivationDate;
+    public String getExpirationDate() {
+        return expirationDate;
     }
-    public String getActivationDate(){
-        return this.ActivationDate;
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
-    public void setExpirationDate(String ExpirationDate){
-        this.ExpirationDate = ExpirationDate;
+
+    public String getChargedAmount() {
+        return chargedAmount;
     }
-    public String getExpirationDate(){
-        return this.ExpirationDate;
-    }
-    public void setChargedAmount(String ChargedAmount){
-        this.ChargedAmount = ChargedAmount;
-    }
-    public String getChargedAmount(){
-        return this.ChargedAmount;
+
+    public void setChargedAmount(String chargedAmount) {
+        this.chargedAmount = chargedAmount;
     }
 }

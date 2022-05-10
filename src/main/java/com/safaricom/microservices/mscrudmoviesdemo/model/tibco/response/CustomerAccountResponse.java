@@ -1,9 +1,12 @@
 package com.safaricom.microservices.mscrudmoviesdemo.model.tibco.response;
 
-public class CustomerAccountResponse {
-    private RelatedParty relatedParty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    private BillingInfo BillingInfo;
+public class CustomerAccountResponse {
+    @JsonProperty("relatedParty")
+    private RelatedParty relatedParty;
+    @JsonProperty("BillingInfo")
+    private BillingInfo billingInfo;
 
     public void setRelatedParty(RelatedParty relatedParty){
         this.relatedParty = relatedParty;
@@ -11,10 +14,12 @@ public class CustomerAccountResponse {
     public RelatedParty getRelatedParty(){
         return this.relatedParty;
     }
-    public void setBillingInfo(BillingInfo BillingInfo){
-        this.BillingInfo = BillingInfo;
+
+    public BillingInfo getBillingInfo() {
+        return billingInfo;
     }
-    public BillingInfo getBillingInfo(){
-        return this.BillingInfo;
+
+    public void setBillingInfo(BillingInfo billingInfo) {
+        this.billingInfo = billingInfo;
     }
 }

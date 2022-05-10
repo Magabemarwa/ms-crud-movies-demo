@@ -1,13 +1,16 @@
 package com.safaricom.microservices.mscrudmoviesdemo.model.tibco.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class RelatedParty {
+    @JsonProperty("resultCode")
     private String resultCode;
-
-    private String ResultDesc;
-
-    private String PrimaryIdentity;
-
-    private String OfferingID;
+    @JsonProperty("ResultDesc")
+    private String resultDesc;
+    @JsonProperty("PrimaryIdentity")
+    private String primaryIdentity;
+    @JsonProperty("OfferingID")
+    private String offeringId;
 
     public void setResultCode(String resultCode){
         this.resultCode = resultCode;
@@ -15,22 +18,28 @@ public class RelatedParty {
     public String getResultCode(){
         return this.resultCode;
     }
-    public void setResultDesc(String ResultDesc){
-        this.ResultDesc = ResultDesc;
+
+    public String getResultDesc() {
+        return resultDesc;
     }
-    public String getResultDesc(){
-        return this.ResultDesc;
+
+    public void setResultDesc(String resultDesc) {
+        this.resultDesc = resultDesc;
     }
-    public void setPrimaryIdentity(String PrimaryIdentity){
-        this.PrimaryIdentity = PrimaryIdentity;
+
+    public String getPrimaryIdentity() {
+        return primaryIdentity;
     }
-    public String getPrimaryIdentity(){
-        return this.PrimaryIdentity;
+
+    public void setPrimaryIdentity(String primaryIdentity) {
+        this.primaryIdentity = primaryIdentity;
     }
-    public void setOfferingID(String OfferingID){
-        this.OfferingID = OfferingID;
+
+    public String getOfferingId() {
+        return offeringId;
     }
-    public String getOfferingID(){
-        return this.OfferingID;
+
+    public void setOfferingId(String offeringId) {
+        this.offeringId = offeringId;
     }
 }
